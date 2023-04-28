@@ -6,11 +6,16 @@
 
 ## 原理
 
-首先考虑等式约束问题
+####首先考虑等式约束问题
 
-$min: f(x)$
-
-$s.t.: c(x)=0$
+$$\begin{equation*}
+\begin{split}
+&\min_{x} \,\, f(x)\\
+&s.t.\quad  \left\{\begin{array}{lc}
+c(x)=0\\
+\end{array}\right.
+\end{split}
+\end{equation*}$$
 
 其中$c(x)=(c_1(x),\cdots,c_m(x))^T$
 
@@ -48,3 +53,37 @@ W(x,\lambda)&-A(x)^T\\
 \end{pmatrix}$$
 
 其中$W(x,\lambda)=\nabla^2f(x)-\sum_{i=1}^m\lambda_i\nabla^2c_i(x)$
+
+由最优性条件，$\delta_{x^{(x)}}$为下列二次规划问题的K-T点：
+
+$$\begin{equation*}
+\begin{split}
+&\min \,\, \frac{1}{2}d^TW(x^{(k)},\lambda^{(k)})d+\nabla f(x^{(k)})^Td\\
+&s.t.\quad  \left\{\begin{array}{lc}
+c(x^{(k)})+A(x^{(k)})d=0\\
+\end{array}\right.
+\end{split}
+\end{equation*}$$
+
+#### 我们可以将该方法推广到一般的非线性约束最优化问题
+
+$$\begin{equation*}
+\begin{split}
+&\min_{x} \,\, f(x)\\
+&s.t.\quad  \left\{\begin{array}{lc}
+c_i(x)=0,\, i\in \mathcal{E}\\
+c_i(x)\geq 0,\, i\in \mathcal{I}\\
+\end{array}\right.
+\end{split}
+\end{equation*}$$
+
+在第k次迭代中求解子问题
+
+$$\begin{equation*}
+\begin{split}
+&\min \,\, \frac{1}{2}d^TW(x^{(k)},\lambda^{(k)})d+\nabla f(x^{(k)})^Td\\
+&s.t.\quad  \left\{\begin{array}{lc}
+c(x^{(k)})+A(x^{(k)})d=0\\
+\end{array}\right.
+\end{split}
+\end{equation*}$$

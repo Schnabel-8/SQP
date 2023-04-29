@@ -8,6 +8,9 @@ import numpy as np
 
 import json as js
 
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
 import os
 
 
@@ -84,3 +87,41 @@ def sqp(f,ineq,x0,epsi=1e-3,sigma=0.5,rho=0.8):
     with open('./cache/'+str(hashcode)+'.json', 'w') as f:
         js.dump(data, f)
     return [xk,hashcode]
+
+
+def myplot(f,hashcode,xl=0,xr=1,yl=0,yr=1):
+    fd=open("./cache/"+str(hashcode)+".json")
+    data=js.load(fd)
+    len_d=len(data)
+    xd=[]
+    yd=[]
+    for i in range(0,len_d):
+        xd.append(data[i][0])
+        yd.append(data[i][1])
+    
+    plt.rcParams['xtick.direction'] = 'in' 
+    plt.rcParams['ytick.direction'] = 'in' 
+
+    stepx = 0.01; stepy = 0.01 
+
+    x = np.arange(xl,xr,stepx); y = np.arange(yl,yr,stepy) 
+
+    X,Y = np.meshgrid(x,y) 
+
+    Z = f(X, Y)
+    fig, ax = plt.subplots(figsize=(8,8),dpi=100)
+
+    CS = ax.contourf(X, Y, Z,cmap=mpl.cm.rainbow)
+    plt.colorbar(CS)
+
+    CS = ax.contour(X, Y, Z)
+
+    ax.set_xlabel('$x$'); ax.set_ylabel('$y$')
+    
+    plt.xticks(np.arange(0,1,0.1))
+    plt.yticks(np.arange(0,1,0.1))
+    
+    plt.plot(xd,yd,color='yellow',marker='o', markerfacecolor='white')
+    
+    plt.tight_layout()
+    plt.show()

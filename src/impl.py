@@ -6,6 +6,10 @@ from scipy.optimize import minimize, NonlinearConstraint
 
 import numpy as np
 
+import json as js
+
+import os
+
 
 def genW(hess_f_W,hess_ineq_W,x0_W):
         len_W=len(hess_ineq_W(x0_W))
@@ -24,6 +28,9 @@ def gen_cons(cons_,cons_jac_,xk_):
     return lambda d:jnp.array(cons_(xk_))+jnp.dot(cons_jac_(xk_),d)
 
 def sqp(f,ineq,x0,epsi=1e-3,sigma=0.5,rho=0.8):
+    data=[list(x0)]
+    hashcode=hex(hash(hash(f)+hash(ineq)))
+    
     jac_f=lambda x:np.array(jacfwd(f)(x))
     hess_f=lambda x:np.array(hessian(f)(x))
     jac_ineq=lambda x:np.array(jacfwd(ineq)(x))
@@ -69,5 +76,11 @@ def sqp(f,ineq,x0,epsi=1e-3,sigma=0.5,rho=0.8):
         alphak=alpha_step*np.argmin(plist)
         xk=xk+alphak*dk
         iter+=1
+        data.append(list(xk))
         print("iter :  ",iter,"obj:   ",f(xk),"p:  ",pfunc(xk),"xk:  ",xk,"dk_norm:  ",np.linalg.norm(dk,ord=2),"alphak:   ",alphak)
-    return xk
+    
+    if not os.path.exists("cache"):
+        os.mkdir("cache")
+    with open('./cache/'+str(hashcode)+'.json', 'w') as f:
+        js.dump(data, f)
+    return [xk,hashcode]
